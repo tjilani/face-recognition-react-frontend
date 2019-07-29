@@ -3,7 +3,7 @@ import "./FaceRecognition.css";
 
 const FaceRecognition = ({ urlPic, boxProp }) => {
   return (
-    <div className="center ma">
+    <div className="center ma" style={{ "margin-top": "2rem" }}>
       <div className="relative">
         <img id="inputImage" src={urlPic} alt="" width="500px" height="auto" />
         <div
