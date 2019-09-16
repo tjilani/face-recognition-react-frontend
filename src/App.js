@@ -90,14 +90,31 @@ class App extends Component {
     console.log(box);
   };
 
-  onSubmit = event => {
+  onPictureSubmit = event => {
     this.setState({ imageURL: this.state.input });
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
-      .then(response =>
+      .then(response => {
+        if (response) {
+          fetch('http://localhost:3001/image', {
+            method: 'put',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: this.state.user.id
+            })
+          })
+            .then(response => response.json())
+            .then(count => {
+              this.setState(Object.assign(this.state.user, { entries: count }))
+            })
+            .catch(console.log());
+        }
         this.displayFaceBox(this.calculateFaceLocation(response))
-      )
-      .catch(err => console.log(err));
+      })
+      .catch(err => {
+        console.log(err);
+        throw err;
+      });
   };
 
   changeRoute = route => {
@@ -121,15 +138,15 @@ class App extends Component {
             {/* <Rank /> */}
             <ImageLinkForm
               inputChange={this.onInputChange}
-              onBtnClick={this.onSubmit}
+              onBtnClick={this.onPictureSubmit}
             />
             <FaceRecognition boxProp={box} urlPic={imageURL} />
           </div>
         ) : route === "signin" ? (
-          <Signin onRouteChange={this.changeRoute} />
+          <Signin loadUser={this.loadUser} onRouteChange={this.changeRoute} />
         ) : (
-          <Register loadUser={this.loadUser} onRouteChange={this.changeRoute} />
-        )}
+              <Register loadUser={this.loadUser} onRouteChange={this.changeRoute} />
+            )}
       </div>
     );
   }

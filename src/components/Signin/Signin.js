@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 class Signin extends Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       signInEmail: "",
       signInPassword: ""
@@ -18,6 +18,7 @@ class Signin extends Component {
   };
 
   onSubmitSignIn = () => {
+    console.log("submit");
     fetch("http://localhost:3001/signin", {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -29,6 +30,7 @@ class Signin extends Component {
       .then(response => response.json())
       .then(user => {
         if (user.id) {
+          this.props.loadUser(user);
           this.props.onRouteChange("home");
         }
       });
@@ -72,10 +74,9 @@ class Signin extends Component {
                 className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f5 br3 bg-white dib"
                 type="submit"
                 value="Sign in"
-                onClick={() => onRouteChange("home")}
+                onClick={() => this.onSubmitSignIn()}
               />
             </div>
-
             <div className="lh-copy mt3">
               <p
                 onClick={() => onRouteChange("register")}
